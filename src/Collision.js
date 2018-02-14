@@ -36,19 +36,19 @@ export default class Collision {
 
     switch (closestToWall) {
       case 'top':
-        this.world.getObjects().forEach(object => object.position.y += this.player.moveSpeed + 2)
+        this.world.getObjects().forEach(object => object.position.y += 0.99999999)
         break;
 
       case 'right':
-        this.world.getObjects().forEach(object => object.position.x -= this.player.moveSpeed + 2)
+        this.world.getObjects().forEach(object => object.position.x -= 0.99999999)
         break;
 
       case 'left':
-        this.world.getObjects().forEach(object => object.position.x += this.player.moveSpeed + 2)
+        this.world.getObjects().forEach(object => object.position.x += 0.99999999)
         break;
 
       case 'bottom':
-        this.world.getObjects().forEach(object => object.position.y -= this.player.moveSpeed + 2)
+        this.world.getObjects().forEach(object => object.position.y -= 0.99999999)
         break;
     }
   }

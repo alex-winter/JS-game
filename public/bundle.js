@@ -280,8 +280,7 @@ var Collision = function () {
   }, {
     key: 'bounceBack',
     value: function bounceBack() {
-      var _walls,
-          _this = this;
+      var _walls;
 
       var topWall = Math.abs(this.player.position.y - this.player.collidedWith.position.y);
       var rightWall = Math.abs(this.player.position.x - (this.player.collidedWith.position.x + this.player.collidedWith.dimensions.width));
@@ -295,25 +294,25 @@ var Collision = function () {
       switch (closestToWall) {
         case 'top':
           this.world.getObjects().forEach(function (object) {
-            return object.position.y += _this.player.moveSpeed + 2;
+            return object.position.y += 0.99999999;
           });
           break;
 
         case 'right':
           this.world.getObjects().forEach(function (object) {
-            return object.position.x -= _this.player.moveSpeed + 2;
+            return object.position.x -= 0.99999999;
           });
           break;
 
         case 'left':
           this.world.getObjects().forEach(function (object) {
-            return object.position.x += _this.player.moveSpeed + 2;
+            return object.position.x += 0.99999999;
           });
           break;
 
         case 'bottom':
           this.world.getObjects().forEach(function (object) {
-            return object.position.y -= _this.player.moveSpeed + 2;
+            return object.position.y -= 0.99999999;
           });
           break;
       }
