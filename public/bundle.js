@@ -105,12 +105,53 @@ Game.Player = new _Player2.default(Game.Canvas);
 Game.World = new _World2.default([new _House2.default(100, 100), new _House2.default(440, 100), new _Road2.default(100, 250)]);
 Game.Collision = new _Collision2.default(Game.Player, Game.World);
 
-document.addEventListener('keydown', Game.Collision.keyDownHandler, false);
-document.addEventListener('keyup', Game.Collision.keyUpHandler, false);
+var upPressed = false;
+var rightPressed = false;
+var leftPressed = false;
+var downPressed = false;
+
+document.addEventListener('keydown', keyDownHandler, false);
+document.addEventListener('keyup', keyUpHandler, false);
+
+function keyDownHandler(e) {
+  if (e.keyCode === 38) {
+    upPressed = true;
+  }
+  if (e.keyCode === 39) {
+    rightPressed = true;
+  }
+  if (e.keyCode === 37) {
+    leftPressed = true;
+  }
+  if (e.keyCode === 40) {
+    downPressed = true;
+  }
+}
+
+function keyUpHandler(e) {
+  if (e.keyCode === 38) {
+    upPressed = false;
+  }
+  if (e.keyCode === 39) {
+    rightPressed = false;
+  }
+  if (e.keyCode === 37) {
+    leftPressed = false;
+  }
+  if (e.keyCode === 40) {
+    downPressed = false;
+  }
+}
+
+window.onresize = function (event) {
+  Game.Player.centerPosition();
+};
 
 function draw() {
   var ctx = Game.Canvas.getContext('2d');
   ctx.clearRect(0, 0, Game.Canvas.width, Game.Canvas.height);
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
 
   Game.World.draw(Game.Canvas);
   Game.Player.draw(Game.Canvas);
@@ -118,25 +159,25 @@ function draw() {
   if (Game.Collision.detected()) {
     Game.Collision.bounceBack();
   } else {
-    if (Game.Collision.right && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
+    if (rightPressed && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.x -= Game.Player.moveSpeed;
       });
     }
 
-    if (Game.Collision.left && Game.Player.position.x > Game.viewPortPadding) {
+    if (leftPressed && Game.Player.position.x > Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.x += Game.Player.moveSpeed;
       });
     }
 
-    if (Game.Collision.down && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
+    if (downPressed && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.y -= Game.Player.moveSpeed;
       });
     }
 
-    if (Game.Collision.up && Game.Player.position.y > Game.viewPortPadding) {
+    if (upPressed && Game.Player.position.y > Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.y += Game.Player.moveSpeed;
       });
@@ -355,15 +396,20 @@ var Player = function () {
 
     this.dimensions = { width: 20, height: 20 };
 
-    this.position = {
-      x: Canvas.width / 2 - this.dimensions.width / 2,
-      y: Canvas.height / 2 - this.dimensions.height / 2
-    };
+    this.centerPosition();
 
     this.collidedWith = false;
   }
 
   _createClass(Player, [{
+    key: "centerPosition",
+    value: function centerPosition() {
+      this.position = {
+        x: window.innerWidth / 2 - this.dimensions.width / 2,
+        y: window.innerHeight / 2 - this.dimensions.height / 2
+      };
+    }
+  }, {
     key: "draw",
     value: function draw(Canvas) {
       var ctx = Canvas.getContext("2d");

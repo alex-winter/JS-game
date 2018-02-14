@@ -5,12 +5,16 @@ export default class Player {
 
     this.dimensions = {width: 20, height: 20}
 
-    this.position = {
-      x: (Canvas.width / 2) - (this.dimensions.width / 2),
-      y: (Canvas.height / 2) - (this.dimensions.height / 2)
-    }
+    this.centerPosition()
 
     this.collidedWith = false
+  }
+
+  centerPosition () {
+    this.position = {
+      x: (window.innerWidth / 2) - (this.dimensions.width / 2),
+      y: (window.innerHeight / 2) - (this.dimensions.height / 2)
+    }
   }
 
   draw (Canvas) {

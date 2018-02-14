@@ -18,12 +18,53 @@ Game.World           = new World([
 ])
 Game.Collision       = new Collision(Game.Player, Game.World)
 
-document.addEventListener('keydown', Game.Collision.keyDownHandler, false)
-document.addEventListener('keyup', Game.Collision.keyUpHandler, false)
+let upPressed    = false
+let rightPressed = false
+let leftPressed  = false
+let downPressed  = false
+
+document.addEventListener('keydown', keyDownHandler, false)
+document.addEventListener('keyup', keyUpHandler, false)
+
+function keyDownHandler (e) {
+  if (e.keyCode === 38) {
+    upPressed = true
+  }
+  if (e.keyCode === 39) {
+    rightPressed = true
+  }
+  if (e.keyCode === 37) {
+    leftPressed = true
+  }
+  if (e.keyCode === 40) {
+    downPressed = true
+  }
+}
+
+function keyUpHandler (e) {
+  if (e.keyCode === 38) {
+    upPressed = false
+  }
+  if (e.keyCode === 39) {
+    rightPressed = false
+  }
+  if (e.keyCode === 37) {
+    leftPressed = false
+  }
+  if (e.keyCode === 40) {
+    downPressed = false
+  }
+}
+
+window.onresize = function(event) {
+  Game.Player.centerPosition()
+};
 
 function draw () {
   let ctx = Game.Canvas.getContext('2d')
   ctx.clearRect(0, 0, Game.Canvas.width, Game.Canvas.height)
+  ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
 
   Game.World.draw(Game.Canvas)
   Game.Player.draw(Game.Canvas)
@@ -31,19 +72,19 @@ function draw () {
   if (Game.Collision.detected()) {
     Game.Collision.bounceBack()
   } else {
-    if (Game.Collision.right && (Game.Player.position.x + Game.Player.dimensions.width) < Game.Canvas.width - Game.viewPortPadding) {
+    if (rightPressed && (Game.Player.position.x + Game.Player.dimensions.width) < Game.Canvas.width - Game.viewPortPadding) {
       Game.World.getObjects().forEach(object => object.position.x -= Game.Player.moveSpeed)
     }
 
-    if (Game.Collision.left && Game.Player.position.x > Game.viewPortPadding) {
+    if (leftPressed && Game.Player.position.x > Game.viewPortPadding) {
       Game.World.getObjects().forEach(object => object.position.x += Game.Player.moveSpeed)
     }
 
-    if (Game.Collision.down && (Game.Player.position.y + Game.Player.dimensions.height) < Game.Canvas.height - Game.viewPortPadding) {
+    if (downPressed && (Game.Player.position.y + Game.Player.dimensions.height) < Game.Canvas.height - Game.viewPortPadding) {
       Game.World.getObjects().forEach(object => object.position.y -= Game.Player.moveSpeed)
     }
 
-    if (Game.Collision.up && Game.Player.position.y > Game.viewPortPadding) {
+    if (upPressed && Game.Player.position.y > Game.viewPortPadding) {
       Game.World.getObjects().forEach(object => object.position.y += Game.Player.moveSpeed)
     }
   }
