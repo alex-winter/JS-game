@@ -74,23 +74,23 @@ var _Keyboard = __webpack_require__(1);
 
 var _Keyboard2 = _interopRequireDefault(_Keyboard);
 
-var _Collision = __webpack_require__(6);
+var _Collision = __webpack_require__(2);
 
 var _Collision2 = _interopRequireDefault(_Collision);
 
-var _World = __webpack_require__(2);
+var _World = __webpack_require__(3);
 
 var _World2 = _interopRequireDefault(_World);
 
-var _Player = __webpack_require__(3);
+var _Player = __webpack_require__(4);
 
 var _Player2 = _interopRequireDefault(_Player);
 
-var _House = __webpack_require__(4);
+var _House = __webpack_require__(5);
 
 var _House2 = _interopRequireDefault(_House);
 
-var _Road = __webpack_require__(5);
+var _Road = __webpack_require__(6);
 
 var _Road2 = _interopRequireDefault(_Road);
 
@@ -105,43 +105,8 @@ Game.Player = new _Player2.default(Game.Canvas);
 Game.World = new _World2.default([new _House2.default(100, 100), new _House2.default(440, 100), new _Road2.default(100, 250)]);
 Game.Collision = new _Collision2.default(Game.Player, Game.World);
 
-var upPressed = false;
-var rightPressed = false;
-var leftPressed = false;
-var downPressed = false;
-
-document.addEventListener('keydown', keyDownHandler, false);
-document.addEventListener('keyup', keyUpHandler, false);
-
-function keyDownHandler(e) {
-  if (e.keyCode === 38) {
-    upPressed = true;
-  }
-  if (e.keyCode === 39) {
-    rightPressed = true;
-  }
-  if (e.keyCode === 37) {
-    leftPressed = true;
-  }
-  if (e.keyCode === 40) {
-    downPressed = true;
-  }
-}
-
-function keyUpHandler(e) {
-  if (e.keyCode === 38) {
-    upPressed = false;
-  }
-  if (e.keyCode === 39) {
-    rightPressed = false;
-  }
-  if (e.keyCode === 37) {
-    leftPressed = false;
-  }
-  if (e.keyCode === 40) {
-    downPressed = false;
-  }
-}
+document.addEventListener('keydown', Game.Collision.keyDownHandler, false);
+document.addEventListener('keyup', Game.Collision.keyUpHandler, false);
 
 function draw() {
   var ctx = Game.Canvas.getContext('2d');
@@ -153,25 +118,25 @@ function draw() {
   if (Game.Collision.detected()) {
     Game.Collision.bounceBack();
   } else {
-    if (rightPressed && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
+    if (Game.Collision.right && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.x -= Game.Player.moveSpeed;
       });
     }
 
-    if (leftPressed && Game.Player.position.x > Game.viewPortPadding) {
+    if (Game.Collision.left && Game.Player.position.x > Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.x += Game.Player.moveSpeed;
       });
     }
 
-    if (downPressed && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
+    if (Game.Collision.down && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.y -= Game.Player.moveSpeed;
       });
     }
 
-    if (upPressed && Game.Player.position.y > Game.viewPortPadding) {
+    if (Game.Collision.up && Game.Player.position.y > Game.viewPortPadding) {
       Game.World.getObjects().forEach(function (object) {
         return object.position.y += Game.Player.moveSpeed;
       });
@@ -233,194 +198,6 @@ exports.default = Keyboard;
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var World = function () {
-  function World(objects) {
-    _classCallCheck(this, World);
-
-    this.objects = objects;
-  }
-
-  _createClass(World, [{
-    key: "getObjects",
-    value: function getObjects() {
-      return this.objects;
-    }
-  }, {
-    key: "getSolidObjects",
-    value: function getSolidObjects() {
-      return this.objects.filter(function (object) {
-        return object.isSolid;
-      });
-    }
-  }, {
-    key: "draw",
-    value: function draw(Canvas) {
-      this.objects.forEach(function (object) {
-        return object.draw(Canvas);
-      });
-    }
-  }]);
-
-  return World;
-}();
-
-exports.default = World;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Player = function () {
-  function Player(Canvas) {
-    _classCallCheck(this, Player);
-
-    this.moveSpeed = 8;
-
-    this.dimensions = { width: 20, height: 20 };
-
-    this.position = {
-      x: Canvas.width / 2 - this.dimensions.width / 2,
-      y: Canvas.height / 2 - this.dimensions.height / 2
-    };
-
-    this.collidedWith = false;
-  }
-
-  _createClass(Player, [{
-    key: "draw",
-    value: function draw(Canvas) {
-      var ctx = Canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
-      ctx.fillStyle = '#ff0000';
-      ctx.fill();
-      ctx.closePath();
-    }
-  }]);
-
-  return Player;
-}();
-
-exports.default = Player;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Home = function () {
-  function Home(x, y) {
-    _classCallCheck(this, Home);
-
-    this.position = {
-      x: x,
-      y: y
-    };
-
-    this.dimensions = {
-      width: 300,
-      height: 150
-    };
-
-    this.isSolid = true;
-  }
-
-  _createClass(Home, [{
-    key: "draw",
-    value: function draw(Canvas) {
-      var ctx = Canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.fillStyle = '#ff8a1f';
-      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
-      ctx.fill();
-      ctx.closePath();
-    }
-  }]);
-
-  return Home;
-}();
-
-exports.default = Home;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Road = function () {
-  function Road(x, y) {
-    _classCallCheck(this, Road);
-
-    this.position = { x: x, y: y };
-
-    this.dimensions = { width: 100, height: 100 };
-
-    this.isSolid = false;
-  }
-
-  _createClass(Road, [{
-    key: "draw",
-    value: function draw(Canvas) {
-      var ctx = Canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
-      ctx.fillStyle = '#616161';
-      ctx.fill();
-      ctx.closePath();
-    }
-  }]);
-
-  return Road;
-}();
-
-exports.default = Road;
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -506,6 +283,194 @@ var Collision = function () {
 }();
 
 exports.default = Collision;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var World = function () {
+  function World(objects) {
+    _classCallCheck(this, World);
+
+    this.objects = objects;
+  }
+
+  _createClass(World, [{
+    key: "getObjects",
+    value: function getObjects() {
+      return this.objects;
+    }
+  }, {
+    key: "getSolidObjects",
+    value: function getSolidObjects() {
+      return this.objects.filter(function (object) {
+        return object.isSolid;
+      });
+    }
+  }, {
+    key: "draw",
+    value: function draw(Canvas) {
+      this.objects.forEach(function (object) {
+        return object.draw(Canvas);
+      });
+    }
+  }]);
+
+  return World;
+}();
+
+exports.default = World;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Player = function () {
+  function Player(Canvas) {
+    _classCallCheck(this, Player);
+
+    this.moveSpeed = 8;
+
+    this.dimensions = { width: 20, height: 20 };
+
+    this.position = {
+      x: Canvas.width / 2 - this.dimensions.width / 2,
+      y: Canvas.height / 2 - this.dimensions.height / 2
+    };
+
+    this.collidedWith = false;
+  }
+
+  _createClass(Player, [{
+    key: "draw",
+    value: function draw(Canvas) {
+      var ctx = Canvas.getContext("2d");
+      ctx.beginPath();
+      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
+      ctx.fillStyle = '#ff0000';
+      ctx.fill();
+      ctx.closePath();
+    }
+  }]);
+
+  return Player;
+}();
+
+exports.default = Player;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Home = function () {
+  function Home(x, y) {
+    _classCallCheck(this, Home);
+
+    this.position = {
+      x: x,
+      y: y
+    };
+
+    this.dimensions = {
+      width: 300,
+      height: 150
+    };
+
+    this.isSolid = true;
+  }
+
+  _createClass(Home, [{
+    key: "draw",
+    value: function draw(Canvas) {
+      var ctx = Canvas.getContext("2d");
+      ctx.beginPath();
+      ctx.fillStyle = '#ff8a1f';
+      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
+      ctx.fill();
+      ctx.closePath();
+    }
+  }]);
+
+  return Home;
+}();
+
+exports.default = Home;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Road = function () {
+  function Road(x, y) {
+    _classCallCheck(this, Road);
+
+    this.position = { x: x, y: y };
+
+    this.dimensions = { width: 100, height: 100 };
+
+    this.isSolid = false;
+  }
+
+  _createClass(Road, [{
+    key: "draw",
+    value: function draw(Canvas) {
+      var ctx = Canvas.getContext("2d");
+      ctx.beginPath();
+      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
+      ctx.fillStyle = '#616161';
+      ctx.fill();
+      ctx.closePath();
+    }
+  }]);
+
+  return Road;
+}();
+
+exports.default = Road;
 
 /***/ })
 /******/ ]);
