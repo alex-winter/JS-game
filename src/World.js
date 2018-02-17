@@ -1,15 +1,15 @@
 export default class World {
 
-  constructor (objects) {
-    this.objects = objects
-  }
-
   getObjects () {
     return this.objects
   }
 
   getSolidObjects () {
     return this.objects.filter(object => object.isSolid)
+  }
+
+  loadObjects (objects) {
+    this.objects = objects
   }
 
   draw (Canvas) {

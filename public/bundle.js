@@ -86,108 +86,119 @@ var _Player = __webpack_require__(4);
 
 var _Player2 = _interopRequireDefault(_Player);
 
-var _House = __webpack_require__(5);
+var _StreetBuilder = __webpack_require__(5);
 
-var _House2 = _interopRequireDefault(_House);
-
-var _Road = __webpack_require__(6);
-
-var _Road2 = _interopRequireDefault(_Road);
+var _StreetBuilder2 = _interopRequireDefault(_StreetBuilder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Game = self.Game = {};
+var draw = void 0;
 
-Game.Canvas = document.getElementById("canvas");
-Game.viewPortPadding = 20;
-Game.Keyboard = new _Keyboard2.default();
-Game.Player = new _Player2.default(Game.Canvas);
-Game.World = new _World2.default([new _House2.default(100, 100), new _House2.default(440, 100), new _Road2.default(100, 250)]);
-Game.Collision = new _Collision2.default(Game.Player, Game.World);
+new Promise(function (resolve, reject) {
+  var Game = self.Game = {};
 
-var upPressed = false;
-var rightPressed = false;
-var leftPressed = false;
-var downPressed = false;
+  var street = new _StreetBuilder2.default(100, 200);
 
-document.addEventListener('keydown', keyDownHandler, false);
-document.addEventListener('keyup', keyUpHandler, false);
+  street.make();
 
-function keyDownHandler(e) {
-  if (e.keyCode === 38) {
-    upPressed = true;
-  }
-  if (e.keyCode === 39) {
-    rightPressed = true;
-  }
-  if (e.keyCode === 37) {
-    leftPressed = true;
-  }
-  if (e.keyCode === 40) {
-    downPressed = true;
-  }
-}
+  Game.Canvas = document.getElementById("canvas");
+  Game.viewPortPadding = 20;
+  Game.Keyboard = new _Keyboard2.default();
+  Game.Player = new _Player2.default(Game.Canvas);
+  Game.World = new _World2.default();
+  Game.Collision = new _Collision2.default(Game.Player, Game.World);
 
-function keyUpHandler(e) {
-  if (e.keyCode === 38) {
-    upPressed = false;
-  }
-  if (e.keyCode === 39) {
-    rightPressed = false;
-  }
-  if (e.keyCode === 37) {
-    leftPressed = false;
-  }
-  if (e.keyCode === 40) {
-    downPressed = false;
-  }
-}
+  Game.World.loadObjects(street.objects);
 
-window.onresize = function (event) {
-  Game.Player.centerPosition();
-};
+  var upPressed = false;
+  var rightPressed = false;
+  var leftPressed = false;
+  var downPressed = false;
 
-function draw() {
-  var ctx = Game.Canvas.getContext('2d');
-  ctx.clearRect(0, 0, Game.Canvas.width, Game.Canvas.height);
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+  document.addEventListener('keydown', keyDownHandler, false);
+  document.addEventListener('keyup', keyUpHandler, false);
 
-  Game.World.draw(Game.Canvas);
-  Game.Player.draw(Game.Canvas);
-
-  if (Game.Collision.detected()) {
-    Game.Collision.bounceBack();
-  } else {
-    if (rightPressed && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
-      Game.World.getObjects().forEach(function (object) {
-        return object.position.x -= Game.Player.moveSpeed;
-      });
+  function keyDownHandler(e) {
+    if (e.keyCode === 38) {
+      upPressed = true;
     }
-
-    if (leftPressed && Game.Player.position.x > Game.viewPortPadding) {
-      Game.World.getObjects().forEach(function (object) {
-        return object.position.x += Game.Player.moveSpeed;
-      });
+    if (e.keyCode === 39) {
+      rightPressed = true;
     }
-
-    if (downPressed && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
-      Game.World.getObjects().forEach(function (object) {
-        return object.position.y -= Game.Player.moveSpeed;
-      });
+    if (e.keyCode === 37) {
+      leftPressed = true;
     }
-
-    if (upPressed && Game.Player.position.y > Game.viewPortPadding) {
-      Game.World.getObjects().forEach(function (object) {
-        return object.position.y += Game.Player.moveSpeed;
-      });
+    if (e.keyCode === 40) {
+      downPressed = true;
     }
   }
 
-  window.requestAnimationFrame(draw);
-}
+  function keyUpHandler(e) {
+    if (e.keyCode === 38) {
+      upPressed = false;
+    }
+    if (e.keyCode === 39) {
+      rightPressed = false;
+    }
+    if (e.keyCode === 37) {
+      leftPressed = false;
+    }
+    if (e.keyCode === 40) {
+      downPressed = false;
+    }
+  }
 
-window.requestAnimationFrame(draw);
+  window.onresize = function () {
+    Game.Player.centerPosition();
+  };
+
+  draw = function draw() {
+
+    var ctx = Game.Canvas.getContext('2d');
+    ctx.rect(0, 0, Game.Canvas.width, Game.Canvas.height);
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
+
+    Game.World.draw(Game.Canvas);
+    Game.Player.draw(Game.Canvas);
+
+    if (Game.Collision.detected()) {
+      Game.Collision.bounceBack();
+    } else {
+      if (rightPressed && Game.Player.position.x + Game.Player.dimensions.width < Game.Canvas.width - Game.viewPortPadding) {
+        Game.World.getObjects().forEach(function (object) {
+          return object.position.x -= Game.Player.moveSpeed;
+        });
+      }
+
+      if (leftPressed && Game.Player.position.x > Game.viewPortPadding) {
+        Game.World.getObjects().forEach(function (object) {
+          return object.position.x += Game.Player.moveSpeed;
+        });
+      }
+
+      if (downPressed && Game.Player.position.y + Game.Player.dimensions.height < Game.Canvas.height - Game.viewPortPadding) {
+        Game.World.getObjects().forEach(function (object) {
+          return object.position.y -= Game.Player.moveSpeed;
+        });
+      }
+
+      if (upPressed && Game.Player.position.y > Game.viewPortPadding) {
+        Game.World.getObjects().forEach(function (object) {
+          return object.position.y += Game.Player.moveSpeed;
+        });
+      }
+    }
+
+    // window.requestAnimationFrame(draw)
+  };
+
+  resolve('done');
+}).then(function () {
+  setInterval(function () {
+    draw();
+  }, 15);
+});
 
 /***/ }),
 /* 1 */
@@ -340,10 +351,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var World = function () {
-  function World(objects) {
+  function World() {
     _classCallCheck(this, World);
-
-    this.objects = objects;
   }
 
   _createClass(World, [{
@@ -357,6 +366,11 @@ var World = function () {
       return this.objects.filter(function (object) {
         return object.isSolid;
       });
+    }
+  }, {
+    key: "loadObjects",
+    value: function loadObjects(objects) {
+      this.objects = objects;
     }
   }, {
     key: "draw",
@@ -391,7 +405,7 @@ var Player = function () {
   function Player(Canvas) {
     _classCallCheck(this, Player);
 
-    this.moveSpeed = 8;
+    this.moveSpeed = 7;
 
     this.dimensions = { width: 20, height: 20 };
 
@@ -438,41 +452,40 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _House = __webpack_require__(6);
+
+var _House2 = _interopRequireDefault(_House);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Home = function () {
-  function Home(x, y) {
-    _classCallCheck(this, Home);
+var StreetBuilder = function () {
+  function StreetBuilder(x, y) {
+    _classCallCheck(this, StreetBuilder);
 
-    this.position = {
-      x: x,
-      y: y
-    };
-
-    this.dimensions = {
-      width: 300,
-      height: 150
-    };
-
-    this.isSolid = true;
+    this.objects = [];
+    this.housePadding = 21;
+    this.width = 0;
+    this.x = x;
+    this.y = y;
   }
 
-  _createClass(Home, [{
-    key: "draw",
-    value: function draw(Canvas) {
-      var ctx = Canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.fillStyle = '#ff8a1f';
-      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
-      ctx.fill();
-      ctx.closePath();
+  _createClass(StreetBuilder, [{
+    key: 'make',
+    value: function make() {
+      for (var i = 0; i <= 5; i++) {
+        var house = new _House2.default(this.x + this.width + this.housePadding, this.y);
+        this.width += house.dimensions.width + this.housePadding;
+        this.objects.push(house);
+      }
     }
   }]);
 
-  return Home;
+  return StreetBuilder;
 }();
 
-exports.default = Home;
+exports.default = StreetBuilder;
 
 /***/ }),
 /* 6 */
@@ -489,33 +502,44 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Road = function () {
-  function Road(x, y) {
-    _classCallCheck(this, Road);
+var House = function () {
+  function House(x, y) {
+    _classCallCheck(this, House);
 
-    this.position = { x: x, y: y };
+    this.position = {
+      x: x,
+      y: y
+    };
 
-    this.dimensions = { width: 100, height: 100 };
+    this.dimensions = {
+      width: 300,
+      height: 150
+    };
 
-    this.isSolid = false;
+    this.isSolid = true;
+
+    this.mask = new Image();
+    var that = this;
+    var canvas = document.getElementById('canvas');
+    this.mask.onload = function () {
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      canvas.getContext('2d').drawImage(that.mask, that.position.x, that.position.y, that.dimensions.width, that.dimensions.height);
+    };
+    this.mask.src = '/JS-test/public/images/roof-tiles.jpg';
   }
 
-  _createClass(Road, [{
-    key: "draw",
+  _createClass(House, [{
+    key: 'draw',
     value: function draw(Canvas) {
-      var ctx = Canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.rect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
-      ctx.fillStyle = '#616161';
-      ctx.fill();
-      ctx.closePath();
+      Canvas.getContext('2d').clearRect(this.position.x, this.position.y, Canvas.width, Canvas.height);
+      Canvas.getContext('2d').drawImage(this.mask, this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
     }
   }]);
 
-  return Road;
+  return House;
 }();
 
-exports.default = Road;
+exports.default = House;
 
 /***/ })
 /******/ ]);

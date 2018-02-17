@@ -1,7 +1,7 @@
 export default class Player {
 
   constructor (Canvas) {
-    this.moveSpeed = 8
+    this.moveSpeed = 7
 
     this.dimensions = {width: 20, height: 20}
 
